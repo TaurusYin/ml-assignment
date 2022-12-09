@@ -1,1 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: translator-app
+spec:
+  selector:
+    matchLabels:
+      app: translator-app
+  template:
+    metadata:
+      labels:
+        app: translator-app
+    spec:
+      containers:
+      - name: translator-app
+        image: IMAGE/translator-app:v1
+        imagePullPolicy: Never
+        resources:
+          limits:
+            memory: "4GiB"
+            cpu: "500m"
+        ports:
+        - containerPort: 9527
+
 ---
+apiVersion: apps/v1
+kind: Service
+metadata:
+  labels:
+    app: translator-app
+  name: translator-app
+spec:
+  ports:
+  - port: 80
+    protocol: "TCP"
+    targetPort: 9527
+  selector:
+    app: translator-app
+  type: LoadBalancer
